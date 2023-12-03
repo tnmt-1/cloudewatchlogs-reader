@@ -1,9 +1,10 @@
 'use client'
 import { LogGroupRecord, LogGroupRecords } from '@/app/LogEvent/page'
+import Link from '@/components/ui/Link'
+import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid'
 import { format } from 'date-fns'
 import ja from 'date-fns/locale/ja'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const columns: GridColDef[] = [
@@ -52,6 +53,10 @@ export function LogGroupsComponent({
 
   return (
     <div>
+      <Breadcrumbs className="text-sm mb-4" aria-label="breadcrumb">
+        <Link href="/">Home</Link>
+        <label className="text-slate-900 font-bold">LogEvent</label>
+      </Breadcrumbs>
       <DataGrid
         rows={rows}
         columns={columns}
