@@ -17,7 +17,7 @@ async function fetchLogEventRecords(
 ): Promise<LogEventRecords> {
   'use server'
   const res = await fetch(
-    `http://localhost:3000/api/cloudwatchlogs/GetLogEvents?logGroupName=${logGroupName}&logStreamName=${logStreamName}`,
+    `${process.env.BASE_URL}/api/cloudwatchlogs/GetLogEvents?logGroupName=${logGroupName}&logStreamName=${logStreamName}`,
   )
   const resBody = await res.json()
   return resBody.message

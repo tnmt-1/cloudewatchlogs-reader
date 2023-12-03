@@ -5,7 +5,7 @@ export default function Home() {
     <main className="">
       <ul>
         <li>
-          <Link href="/LogEvent">ロググループから探す</Link>
+          <Link href="/LogGroup">ロググループから探す</Link>
         </li>
       </ul>
     </main>

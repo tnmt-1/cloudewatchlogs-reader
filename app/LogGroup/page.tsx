@@ -11,7 +11,7 @@ export type LogGroupRecord = {
 
 async function fetchLogGroupRecords(): Promise<LogGroupRecords> {
   'use server'
-  const res = await fetch('http://localhost:3000/api/cloudwatchlogs/DescribeLogGroups')
+  const res = await fetch(`${process.env.BASE_URL}/api/cloudwatchlogs/DescribeLogGroups`)
   const resBody = await res.json()
   return resBody
 }

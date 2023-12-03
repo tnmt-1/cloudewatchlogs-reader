@@ -1,5 +1,5 @@
 'use client'
-import { LogGroupRecord, LogGroupRecords } from '@/app/LogEvent/page'
+import { LogGroupRecord, LogGroupRecords } from '@/app/LogGroup/page'
 import Link from '@/components/ui/Link'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid'
@@ -21,7 +21,7 @@ const columns: GridColDef[] = [
     filterable: true,
     renderCell: (params: GridRenderCellParams) => (
       <>
-        <Link href={`/LogEvent/${encodeURIComponent(params.row.logGroupName)}`}>{params.id}</Link>
+        <Link href={`/LogGroup/${encodeURIComponent(params.row.logGroupName)}`}>{params.id}</Link>
       </>
     ),
   },
@@ -55,7 +55,7 @@ export function LogGroupsComponent({
     <div>
       <Breadcrumbs className="text-sm mb-4" aria-label="breadcrumb">
         <Link href="/">Home</Link>
-        <label className="text-slate-900 font-bold">LogEvent</label>
+        <label className="text-slate-900 font-bold">LogGroup</label>
       </Breadcrumbs>
       <DataGrid
         rows={rows}

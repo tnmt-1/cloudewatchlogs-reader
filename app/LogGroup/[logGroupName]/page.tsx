@@ -13,7 +13,7 @@ export type LogStreamsRecord = {
 async function fetchLogEventRecords(logGroupName: string): Promise<LogStreamsRecords> {
   'use server'
   const res = await fetch(
-    `http://localhost:3000/api/cloudwatchlogs/DescribeLogStreams?logGroupName=${logGroupName}`,
+    `${process.env.BASE_URL}/api/cloudwatchlogs/DescribeLogStreams?logGroupName=${logGroupName}`,
   )
   const resBody = await res.json()
   return resBody.message

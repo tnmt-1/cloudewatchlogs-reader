@@ -1,5 +1,5 @@
 'use client'
-import { LogEventRecord, LogEventRecords } from '@/app/LogEvent/[logGroupName]/[logStreamName]/page'
+import { LogEventRecord, LogEventRecords } from '@/app/LogGroup/[logGroupName]/[logStreamName]/page'
 import Link from '@/components/ui/Link'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid'
@@ -53,8 +53,8 @@ export function LogEventRecordsComponent({
     <div>
       <Breadcrumbs className="text-sm mb-4" aria-label="breadcrumb">
         <Link href="/">Home</Link>
-        <Link href="/LogEvent">LogEvent</Link>
-        <Link href={`/LogEvent/${logGroupName}`}>{decodeURIComponent(logGroupName)}</Link>
+        <Link href="/LogGroup">LogGroup</Link>
+        <Link href={`/LogGroup/${logGroupName}`}>{decodeURIComponent(logGroupName)}</Link>
         <label className="text-slate-900 font-bold">{decodeURIComponent(logStreamName)}</label>
       </Breadcrumbs>
       <DataGrid
