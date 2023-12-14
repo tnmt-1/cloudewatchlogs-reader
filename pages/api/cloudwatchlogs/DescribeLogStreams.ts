@@ -2,12 +2,13 @@ import {
   CloudWatchLogsClient,
   DescribeLogStreamsCommand,
   DescribeLogStreamsCommandInput,
-} from "@aws-sdk/client-cloudwatch-logs"; // ES Modules import
+  DescribeLogStreamsCommandOutput,
+  LogStream,
+} from "@aws-sdk/client-cloudwatch-logs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type SuccessResponseData = {
-  logStreams: object;
-};
+type SuccessResponseData = LogStream[];
+
 type ErrorResponseData = {
   error: unknown;
 };
@@ -27,8 +28,8 @@ export default async function handler(
       logGroupName: logGroupName,
     };
     const command = new DescribeLogStreamsCommand(params);
-    const data = await client.send(command);
-    res.status(200).json({ logStreams: data.logStreams ?? [] });
+    const data: DescribeLogStreamsCommandOutput = await client.send(command);
+    res.status(200).json(data.logStreams ?? []);
   } catch (error: unknown) {
     // error handling.
     console.log(error);

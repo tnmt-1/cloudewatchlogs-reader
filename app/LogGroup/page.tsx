@@ -1,17 +1,14 @@
 import { LogGroupsComponent } from '@/components/client/LogGroupsComponent'
 
-export type LogGroupRecords = {
-  logGroups: LogGroupRecord[]
-}
-
 export type LogGroupRecord = {
   creationTime: number
   logGroupName: string
 }
 
-async function fetchLogGroupRecords(): Promise<LogGroupRecords> {
+async function fetchLogGroupRecords(): Promise<LogGroupRecord[]> {
   'use server'
-  const res = await fetch(`${process.env.BASE_URL}/api/cloudwatchlogs/DescribeLogGroups`)
+  const url = new URL('/api/cloudwatchlogs/DescribeLogGroups', process.env.BASE_URL)
+  const res = await fetch(url.toString())
   const resBody = await res.json()
   return resBody
 }

@@ -20,6 +20,9 @@ dependencies:
   '@mui/x-data-grid':
     specifier: ^6.18.2
     version: 6.18.2(@mui/material@5.14.18)(@mui/system@5.14.18)(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)
+  '@smithy/types':
+    specifier: ^2.6.0
+    version: 2.6.0
   date-fns:
     specifier: ^2.30.0
     version: 2.30.0

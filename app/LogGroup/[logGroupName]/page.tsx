@@ -1,22 +1,20 @@
 import { LogStreamsComponent } from '@/components/client/LogStreamsComponent'
 
-export type LogStreamsRecords = {
-  logStreams: LogStreamsRecord[]
-}
-
 export type LogStreamsRecord = {
   firstEventTimestamp: number
   lastEventTimestamp: number
   logStreamName: string
 }
 
-async function fetchLogEventRecords(logGroupName: string): Promise<LogStreamsRecords> {
+async function fetchLogEventRecords(logGroupName: string): Promise<LogStreamsRecord[]> {
   'use server'
-  const res = await fetch(
-    `${process.env.BASE_URL}/api/cloudwatchlogs/DescribeLogStreams?logGroupName=${logGroupName}`,
+  const url = new URL(
+    `/api/cloudwatchlogs/DescribeLogStreams?logGroupName=${logGroupName}`,
+    process.env.BASE_URL,
   )
+  const res = await fetch(url.toString())
   const resBody = await res.json()
-  return resBody.message
+  return resBody
 }
 
 export default async function Page({ params }: { params: { logGroupName: string } }) {

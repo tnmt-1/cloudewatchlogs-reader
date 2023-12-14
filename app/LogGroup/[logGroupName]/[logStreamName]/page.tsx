@@ -1,26 +1,23 @@
 import { LogEventRecordsComponent } from '@/components/client/LogEventRecordsComponent'
+import { OutputLogEvent } from '@/pages/api/cloudwatchlogs/GetLogEvents'
 
-export type LogEventRecords = {
-  events: LogEventRecord[]
-}
-
-export type LogEventRecord = {
-  eventId: string
-  ingestionTime: number
-  message: string
-  timestamp: number
+export type LogEventResponse = {
+  requestId?: string
+  events: OutputLogEvent[]
 }
 
 async function fetchLogEventRecords(
   logGroupName: string,
   logStreamName: string,
-): Promise<LogEventRecords> {
+): Promise<LogEventResponse> {
   'use server'
-  const res = await fetch(
-    `${process.env.BASE_URL}/api/cloudwatchlogs/GetLogEvents?logGroupName=${logGroupName}&logStreamName=${logStreamName}`,
+  const url = new URL(
+    `/api/cloudwatchlogs/GetLogEvents?logGroupName=${logGroupName}&logStreamName=${logStreamName}`,
+    process.env.BASE_URL,
   )
+  const res: Response = await fetch(url.toString())
   const resBody = await res.json()
-  return resBody.message
+  return resBody
 }
 
 export default async function Page({

@@ -1,5 +1,5 @@
 'use client'
-import { LogGroupRecord, LogGroupRecords } from '@/app/LogGroup/page'
+import { LogGroupRecord } from '@/app/LogGroup/page'
 import Link from '@/components/ui/Link'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid'
@@ -27,26 +27,31 @@ const columns: GridColDef[] = [
   },
 ]
 
+type GridRowDef = {
+  creationTime: string
+  logGroupName: string
+}
+
 export function LogGroupsComponent({
   fetchHandler,
 }: {
-  fetchHandler: () => Promise<LogGroupRecords>
+  fetchHandler: () => Promise<LogGroupRecord[]>
 }) {
-  const [rows, setRows] = useState<object[]>([])
+  const [rows, setRows] = useState<GridRowDef[]>([])
 
   useEffect(() => {
     async function loadLogStreams() {
-      const res = await fetchHandler()
-      setRows(
-        res.logGroups.map((logGroup: LogGroupRecord) => {
-          return {
-            creationTime: format(logGroup.creationTime, 'yyyy-MM-dd HH:mm:ss.SSS', {
-              locale: ja,
-            }),
-            logGroupName: logGroup.logGroupName,
-          }
-        }),
-      )
+      const res: LogGroupRecord[] = await fetchHandler()
+      const rows: GridRowDef[] = res.map((logGroup: LogGroupRecord) => {
+        const row: GridRowDef = {
+          creationTime: format(logGroup.creationTime, 'yyyy-MM-dd HH:mm:ss.SSS', {
+            locale: ja,
+          }),
+          logGroupName: logGroup.logGroupName,
+        }
+        return row
+      })
+      setRows(rows)
     }
     loadLogStreams()
   }, [])

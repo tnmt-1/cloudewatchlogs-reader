@@ -1,5 +1,5 @@
 'use client'
-import { LogStreamsRecord, LogStreamsRecords } from '@/app/LogGroup/[logGroupName]/page'
+import { LogStreamsRecord } from '@/app/LogGroup/[logGroupName]/page'
 import Link from '@/components/ui/Link'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid'
@@ -35,32 +35,39 @@ const columns: GridColDef[] = [
   },
 ]
 
+type GridRowDef = {
+  firstEventTimestamp: string
+  lastEventTimestamp: string
+  logStreamName: string
+  logGroupName: string
+}
+
 export function LogStreamsComponent({
   logGroupName,
   fetchHandler,
 }: {
   logGroupName: string
-  fetchHandler: (logGroupName: string) => Promise<LogStreamsRecords>
+  fetchHandler: (logGroupName: string) => Promise<LogStreamsRecord[]>
 }) {
-  const [rows, setRows] = useState<object[]>([])
+  const [rows, setRows] = useState<GridRowDef[]>([])
 
   useEffect(() => {
     async function loadLogStreams() {
-      const res = await fetchHandler(logGroupName)
-      setRows(
-        res.logStreams.map((logStream: LogStreamsRecord) => {
-          return {
-            firstEventTimestamp: format(logStream.firstEventTimestamp, 'yyyy-MM-dd HH:mm:ss.SSS', {
-              locale: ja,
-            }),
-            lastEventTimestamp: format(logStream.lastEventTimestamp, 'yyyy-MM-dd HH:mm:ss.SSS', {
-              locale: ja,
-            }),
-            logStreamName: logStream.logStreamName,
-            logGroupName: logGroupName,
-          }
-        }),
-      )
+      const res: LogStreamsRecord[] = await fetchHandler(logGroupName)
+      const rows: GridRowDef[] = res.map((logStream: LogStreamsRecord) => {
+        const row: GridRowDef = {
+          firstEventTimestamp: format(logStream.firstEventTimestamp, 'yyyy-MM-dd HH:mm:ss.SSS', {
+            locale: ja,
+          }),
+          lastEventTimestamp: format(logStream.lastEventTimestamp, 'yyyy-MM-dd HH:mm:ss.SSS', {
+            locale: ja,
+          }),
+          logStreamName: logStream.logStreamName,
+          logGroupName: logGroupName,
+        }
+        return row
+      })
+      setRows(rows)
     }
     loadLogStreams()
   }, [])

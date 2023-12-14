@@ -2,12 +2,20 @@ import {
   CloudWatchLogsClient,
   GetLogEventsCommand,
   GetLogEventsCommandInput,
+  GetLogEventsCommandOutput,
+  OutputLogEvent as DefaultOutputLogEvent,
 } from "@aws-sdk/client-cloudwatch-logs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+export type OutputLogEvent = {
+  eventId?: string;
+} & DefaultOutputLogEvent;
+
 type SuccessResponseData = {
-  events: object;
+  requestId?: string;
+  events: OutputLogEvent[];
 };
+
 type ErrorResponseData = {
   error: unknown;
 };
@@ -37,8 +45,11 @@ export default async function handler(
       startFromHead: true,
     };
     const command = new GetLogEventsCommand(params);
-    const data = await client.send(command);
-    res.status(200).json({ events: data.events ?? [] });
+    const data: GetLogEventsCommandOutput = await client.send(command);
+    res.status(200).json({
+      requestId: data.$metadata.requestId,
+      events: data.events ?? [],
+    });
   } catch (error: unknown) {
     // error handling.
     console.log(error);

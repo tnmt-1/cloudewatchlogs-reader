@@ -2,12 +2,13 @@ import {
   CloudWatchLogsClient,
   DescribeLogGroupsCommand,
   DescribeLogGroupsCommandInput,
+  DescribeLogGroupsCommandOutput,
+  LogGroup,
 } from "@aws-sdk/client-cloudwatch-logs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type SuccessResponseData = {
-  logGroups: object;
-};
+type SuccessResponseData = LogGroup[];
+
 type ErrorResponseData = {
   error: unknown;
 };
@@ -20,8 +21,8 @@ export default async function handler(
     const client = new CloudWatchLogsClient({ region: "ap-northeast-1" });
     const params: DescribeLogGroupsCommandInput = {};
     const command = new DescribeLogGroupsCommand(params);
-    const data = await client.send(command);
-    res.status(200).json({ logGroups: data.logGroups ?? [] });
+    const data: DescribeLogGroupsCommandOutput = await client.send(command);
+    res.status(200).json(data.logGroups ?? []);
   } catch (error: unknown) {
     // error handling.
     console.log(error);

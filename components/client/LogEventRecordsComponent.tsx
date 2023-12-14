@@ -1,6 +1,7 @@
 'use client'
-import { LogEventRecord, LogEventRecords } from '@/app/LogGroup/[logGroupName]/[logStreamName]/page'
+import { LogEventResponse } from '@/app/LogGroup/[logGroupName]/[logStreamName]/page'
 import Link from '@/components/ui/Link'
+import { OutputLogEvent } from '@/pages/api/cloudwatchlogs/GetLogEvents'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-data-grid'
 import { format } from 'date-fns'
@@ -9,6 +10,7 @@ import { useEffect, useState } from 'react'
 
 const columns: GridColDef[] = [
   { field: 'timestamp', headerName: 'timestamp', width: 200, filterable: true },
+  { field: 'requestId', headerName: 'requestId', width: 300, filterable: true },
   {
     field: 'message',
     headerName: 'message',
@@ -16,11 +18,17 @@ const columns: GridColDef[] = [
     flex: 0.4,
     filterable: true,
     renderCell: (params: GridRenderCellParams) => {
-      console.log(params)
       return <div style={{ whiteSpace: 'normal' }}>{params.row.message}</div>
     },
   },
 ]
+
+type GridRowDef = {
+  id: string
+  timestamp: string
+  message: string
+  requestId: string
+}
 
 export function LogEventRecordsComponent({
   logGroupName,
@@ -29,24 +37,31 @@ export function LogEventRecordsComponent({
 }: {
   logGroupName: string
   logStreamName: string
-  fetchHandler: (logGroupName: string, logStreamName: string) => Promise<LogEventRecords>
+  fetchHandler: (logGroupName: string, logStreamName: string) => Promise<LogEventResponse>
 }) {
-  const [rows, setRows] = useState<object[]>([])
+  const [rows, setRows] = useState<GridRowDef[]>([])
 
   useEffect(() => {
-    async function loadLogEventRecord() {
-      const logEvents = await fetchHandler(logGroupName, logStreamName)
-      setRows(
-        logEvents.events.map((logEventRecord: LogEventRecord) => {
-          return {
-            id: logEventRecord.eventId,
-            timestamp: format(logEventRecord.timestamp, 'yyyy-MM-dd HH:mm:ss.SSS', { locale: ja }),
-            message: logEventRecord.message,
-          }
-        }),
-      )
+    async function loadLogEventRecords() {
+      const res: LogEventResponse = await fetchHandler(logGroupName, logStreamName)
+      const requestId: string = res.requestId ?? ''
+      const events: OutputLogEvent[] = res.events
+
+      const rows: GridRowDef[] = events.map((event: OutputLogEvent) => {
+        const row: GridRowDef = {
+          id: event.eventId ?? '',
+          timestamp: event.timestamp
+            ? format(event.timestamp, 'yyyy-MM-dd HH:mm:ss.SSS', { locale: ja })
+            : '',
+          message: event.message ?? '',
+          requestId: requestId,
+        }
+        return row
+      })
+
+      setRows(rows)
     }
-    loadLogEventRecord()
+    loadLogEventRecords()
   }, [])
 
   return (
